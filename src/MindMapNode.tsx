@@ -2,6 +2,17 @@ import { useEffect, useRef, useCallback } from "react";
 import { Handle, Position, type NodeProps } from "@xyflow/react";
 import type { NodeData } from "./types";
 
+const BTN_BASE: React.CSSProperties = {
+  position: "absolute",
+  borderRadius: "50%",
+  border: "2px solid #fff",
+  alignItems: "center",
+  justifyContent: "center",
+  zIndex: 10,
+  padding: 0,
+  boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
+};
+
 export default function MindMapNodeComponent({
   id,
   data,
@@ -86,9 +97,9 @@ export default function MindMapNodeComponent({
         </span>
       )}
 
-      {/* 子ノード追加ボタン */}
+      {/* 子ノード追加ボタン（右下） */}
       <button
-        className="nodrag nopan node-action-btn node-add-btn"
+        className="nodrag nopan node-action-btn"
         onPointerDown={(e) => e.stopPropagation()}
         onClick={(e) => {
           e.stopPropagation();
@@ -97,30 +108,51 @@ export default function MindMapNodeComponent({
         }}
         title="子ノードを追加"
         style={{
-          position: "absolute",
+          ...BTN_BASE,
           bottom: -12,
           right: -12,
           width: 24,
           height: 24,
-          borderRadius: "50%",
           background: "#3b82f6",
           color: "#fff",
-          border: "2px solid #fff",
           fontSize: "1em",
           lineHeight: 1,
-          alignItems: "center",
-          justifyContent: "center",
-          zIndex: 10,
-          padding: 0,
-          boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
         }}
       >
         +
       </button>
 
-      {/* 削除ボタン */}
+      {/* 兄弟ノード追加ボタン（下中央）— ルート以外のみ表示 */}
+      {!nodeData.isRoot && (
+        <button
+          className="nodrag nopan node-action-btn"
+          onPointerDown={(e) => e.stopPropagation()}
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            nodeData.onAddSibling(id);
+          }}
+          title="下に並列ノードを追加"
+          style={{
+            ...BTN_BASE,
+            bottom: -12,
+            left: "50%",
+            transform: "translateX(-50%)",
+            width: 24,
+            height: 24,
+            background: "#22c55e",
+            color: "#fff",
+            fontSize: "0.85em",
+            lineHeight: 1,
+          }}
+        >
+          ↓
+        </button>
+      )}
+
+      {/* 削除ボタン（右上） */}
       <button
-        className="nodrag nopan node-action-btn node-delete-btn"
+        className="nodrag nopan node-action-btn"
         onPointerDown={(e) => e.stopPropagation()}
         onClick={(e) => {
           e.stopPropagation();
@@ -129,21 +161,14 @@ export default function MindMapNodeComponent({
         }}
         title="削除"
         style={{
-          position: "absolute",
+          ...BTN_BASE,
           top: -10,
           right: -10,
           width: 20,
           height: 20,
-          borderRadius: "50%",
           background: "#f38ba8",
           color: "#1e1e2e",
-          border: "2px solid #fff",
           fontSize: "0.75em",
-          alignItems: "center",
-          justifyContent: "center",
-          zIndex: 10,
-          padding: 0,
-          boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
         }}
       >
         ×

@@ -55,10 +55,12 @@ function layoutTree(
     }
   });
 
-  const sortKey = (r: MindMapNodeRecord) => r.createdAt ?? r.id;
-  childMap.forEach((children) => {
-    children.sort((a, b) => sortKey(a).localeCompare(sortKey(b)));
-  });
+  // y 座標でソート（同じ y の場合は createdAt でタイブレーク）
+  const byY = (a: MindMapNodeRecord, b: MindMapNodeRecord) => {
+    const dy = a.y - b.y;
+    return dy !== 0 ? dy : (a.createdAt ?? a.id).localeCompare(b.createdAt ?? b.id);
+  };
+  childMap.forEach((children) => children.sort(byY));
 
   const positions = new Map<string, { x: number; y: number }>();
   let yCursor = 0;
@@ -82,7 +84,7 @@ function layoutTree(
 
   const roots = records
     .filter((r) => !r.parentId)
-    .sort((a, b) => sortKey(a).localeCompare(sortKey(b)));
+    .sort(byY);
 
   roots.forEach((root, i) => {
     if (i > 0) yCursor++; // ルートツリー間に余白
@@ -125,6 +127,7 @@ function buildFlowGraph(
   handlers: {
     onLabelChange: (id: string, label: string) => void;
     onAddChild: (parentId: string) => void;
+    onAddSibling: (nodeId: string) => void;
     onDelete: (id: string) => void;
     onStartEdit: (id: string) => void;
     onStopEdit: (id: string) => void;
@@ -163,6 +166,7 @@ function buildFlowGraph(
       label: r.label,
       color: r.color ?? colorForDepth(depthMap.get(r.id) ?? 0),
       isEditing: editingId === r.id,
+      isRoot: !r.parentId,
       ...handlers,
     },
     dragHandle: ".mind-map-node",
@@ -219,16 +223,45 @@ export default function MindMapEditor({ projectId, projectName, onBack }: Props)
       onAddChild: async (parentId: string) => {
         const parent = records.find((r) => r.id === parentId);
         if (!parent) return;
+        // 既存の子の最大 y より大きい値を設定 → レイアウト時に末尾に並ぶ
+        const children = records.filter((r) => r.parentId === parentId);
+        const insertY =
+          children.length > 0
+            ? Math.max(...children.map((c) => c.y)) + 1
+            : parent.y;
         const { data } = await client.models.MindMapNode.create({
           projectId,
           parentId,
           label: "新しいノード",
           x: parent.x,
-          y: parent.y,
+          y: insertY,
         });
         if (!data) return;
         const next = await persistLayout([...records, data]);
         setRecords(next);
+        setEditingId(data.id);
+      },
+      onAddSibling: async (nodeId: string) => {
+        const node = records.find((r) => r.id === nodeId);
+        if (!node || !node.parentId) return;
+        // 同じ親の兄弟を y でソートし、現在ノードの直後に挿入
+        const siblings = records
+          .filter((r) => r.parentId === node.parentId)
+          .sort((a, b) => a.y - b.y);
+        const idx = siblings.findIndex((r) => r.id === nodeId);
+        const next = siblings[idx + 1];
+        // 現在ノードと次の兄弟の中間 y を設定（最後尾なら +1）
+        const insertY = next ? (node.y + next.y) / 2 : node.y + 1;
+        const { data } = await client.models.MindMapNode.create({
+          projectId,
+          parentId: node.parentId,
+          label: "新しいノード",
+          x: node.x,
+          y: insertY,
+        });
+        if (!data) return;
+        const laid = await persistLayout([...records, data]);
+        setRecords(laid);
         setEditingId(data.id);
       },
       onDelete: async (id: string) => {
