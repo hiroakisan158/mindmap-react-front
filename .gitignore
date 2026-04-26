@@ -1,0 +1,20 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Dependencies
+node_modules
+
+# Build output
+dist
+
+# Amplify
+.amplify/
+amplify_outputs.json
+amplifyconfiguration.json
+amplifyconfiguration.ts
+
+# Local env
+.env
+.env.local

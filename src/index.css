@@ -1,0 +1,34 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #f5f6fa;
+  color: #333;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* Action buttons inside mind map nodes */
+.node-action-btn {
+  display: flex;
+  opacity: 0;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  pointer-events: none;
+}
+
+/* Show on node hover (desktop) or when node is selected (mobile/tap) */
+.mind-map-node:hover .node-action-btn,
+.react-flow__node.selected .node-action-btn {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.node-action-btn:hover {
+  transform: scale(1.15);
+}

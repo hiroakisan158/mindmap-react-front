@@ -1,0 +1,155 @@
+import { useEffect, useRef, useCallback } from "react";
+import { Handle, Position, type NodeProps } from "@xyflow/react";
+import type { NodeData } from "./types";
+
+export default function MindMapNodeComponent({
+  id,
+  data,
+  selected,
+}: NodeProps) {
+  const nodeData = data as NodeData;
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (nodeData.isEditing && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [nodeData.isEditing]);
+
+  const handleDoubleClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      nodeData.onStartEdit(id);
+    },
+    [id, nodeData]
+  );
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "Enter" || e.key === "Escape") {
+        nodeData.onStopEdit(id);
+      }
+    },
+    [id, nodeData]
+  );
+
+  return (
+    <div
+      style={{
+        position: "relative",
+        padding: "8px 14px",
+        borderRadius: 20,
+        background: nodeData.color,
+        border: selected ? "2px solid #3b82f6" : "2px solid rgba(0,0,0,0.08)",
+        minWidth: 80,
+        maxWidth: 200,
+        textAlign: "center",
+        cursor: "grab",
+        boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
+        userSelect: "none",
+      }}
+      onDoubleClick={handleDoubleClick}
+      className="mind-map-node"
+    >
+      <Handle type="target" position={Position.Left} style={{ opacity: 0 }} />
+
+      {nodeData.isEditing ? (
+        <input
+          ref={inputRef}
+          defaultValue={nodeData.label}
+          onChange={(e) => nodeData.onLabelChange(id, e.target.value)}
+          onBlur={() => nodeData.onStopEdit(id)}
+          onKeyDown={handleKeyDown}
+          style={{
+            background: "transparent",
+            border: "none",
+            outline: "none",
+            textAlign: "center",
+            width: "100%",
+            fontSize: "0.9em",
+            color: "#1e1e2e",
+            fontWeight: 600,
+          }}
+          onClick={(e) => e.stopPropagation()}
+        />
+      ) : (
+        <span
+          style={{
+            fontSize: "0.9em",
+            fontWeight: 600,
+            color: "#1e1e2e",
+            wordBreak: "break-word",
+          }}
+        >
+          {nodeData.label}
+        </span>
+      )}
+
+      {/* 子ノード追加ボタン */}
+      <button
+        className="nodrag nopan node-action-btn node-add-btn"
+        onPointerDown={(e) => e.stopPropagation()}
+        onClick={(e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          nodeData.onAddChild(id);
+        }}
+        title="子ノードを追加"
+        style={{
+          position: "absolute",
+          bottom: -12,
+          right: -12,
+          width: 24,
+          height: 24,
+          borderRadius: "50%",
+          background: "#3b82f6",
+          color: "#fff",
+          border: "2px solid #fff",
+          fontSize: "1em",
+          lineHeight: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 10,
+          padding: 0,
+          boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
+        }}
+      >
+        +
+      </button>
+
+      {/* 削除ボタン */}
+      <button
+        className="nodrag nopan node-action-btn node-delete-btn"
+        onPointerDown={(e) => e.stopPropagation()}
+        onClick={(e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          nodeData.onDelete(id);
+        }}
+        title="削除"
+        style={{
+          position: "absolute",
+          top: -10,
+          right: -10,
+          width: 20,
+          height: 20,
+          borderRadius: "50%",
+          background: "#f38ba8",
+          color: "#1e1e2e",
+          border: "2px solid #fff",
+          fontSize: "0.75em",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 10,
+          padding: 0,
+          boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
+        }}
+      >
+        ×
+      </button>
+
+      <Handle type="source" position={Position.Right} style={{ opacity: 0 }} />
+    </div>
+  );
+}
