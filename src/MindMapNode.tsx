@@ -43,7 +43,7 @@ export default function MindMapNodeComponent({
         background: nodeData.color,
         border: selected ? "2px solid #3b82f6" : "2px solid rgba(0,0,0,0.08)",
         minWidth: 80,
-        maxWidth: 200,
+        maxWidth: 400,
         textAlign: "center",
         cursor: "grab",
         boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
