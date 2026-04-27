@@ -122,6 +122,34 @@ export default function MindMapNodeComponent({
         +
       </button>
 
+      {/* 上に兄弟ノード追加ボタン（上中央）— 同グループ最上位のみ表示 */}
+      {nodeData.isFirstSibling && (
+        <button
+          className="nodrag nopan node-action-btn"
+          onPointerDown={(e) => e.stopPropagation()}
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            nodeData.onAddAbove(id);
+          }}
+          title="上に並列ノードを追加"
+          style={{
+            ...BTN_BASE,
+            top: -12,
+            left: "50%",
+            transform: "translateX(-50%)",
+            width: 24,
+            height: 24,
+            background: "#22c55e",
+            color: "#fff",
+            fontSize: "0.85em",
+            lineHeight: 1,
+          }}
+        >
+          ↑
+        </button>
+      )}
+
       {/* 兄弟ノード追加ボタン（下中央）— ルート以外のみ表示 */}
       {!nodeData.isRoot && (
         <button

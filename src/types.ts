@@ -8,9 +8,11 @@ export type NodeData = {
   color: string;
   isEditing: boolean;
   isRoot: boolean;
+  isFirstSibling: boolean;
   onLabelChange: (id: string, label: string) => void;
   onAddChild: (parentId: string) => void;
   onAddSibling: (nodeId: string) => void;
+  onAddAbove: (nodeId: string) => void;
   onDelete: (id: string) => void;
   onStartEdit: (id: string) => void;
   onStopEdit: (id: string) => void;

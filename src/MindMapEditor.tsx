@@ -128,6 +128,7 @@ function buildFlowGraph(
     onLabelChange: (id: string, label: string) => void;
     onAddChild: (parentId: string) => void;
     onAddSibling: (nodeId: string) => void;
+    onAddAbove: (nodeId: string) => void;
     onDelete: (id: string) => void;
     onStartEdit: (id: string) => void;
     onStopEdit: (id: string) => void;
@@ -156,6 +157,20 @@ function buildFlowGraph(
     });
   }
 
+  // 各親グループで y が最小（一番上）のノードを特定
+  const firstSiblingSet = new Set<string>();
+  const siblingGroups = new Map<string, MindMapNodeRecord[]>();
+  records.forEach((r) => {
+    const key = r.parentId ?? "__root__";
+    const group = siblingGroups.get(key) ?? [];
+    group.push(r);
+    siblingGroups.set(key, group);
+  });
+  siblingGroups.forEach((group) => {
+    const top = [...group].sort((a, b) => a.y - b.y)[0];
+    if (top) firstSiblingSet.add(top.id);
+  });
+
   const nodes: Node<NodeData>[] = records.map((r) => ({
     id: r.id,
     type: "mindmap",
@@ -167,6 +182,7 @@ function buildFlowGraph(
       color: r.color ?? colorForDepth(depthMap.get(r.id) ?? 0),
       isEditing: editingId === r.id,
       isRoot: !r.parentId,
+      isFirstSibling: firstSiblingSet.has(r.id),
       ...handlers,
     },
     dragHandle: ".mind-map-node",
@@ -239,6 +255,22 @@ export default function MindMapEditor({ projectId, projectName, onBack }: Props)
         if (!data) return;
         const next = await persistLayout([...records, data]);
         setRecords(next);
+        setEditingId(data.id);
+      },
+      onAddAbove: async (nodeId: string) => {
+        const node = records.find((r) => r.id === nodeId);
+        if (!node) return;
+        const insertY = node.y - 1;
+        const { data } = await client.models.MindMapNode.create({
+          projectId,
+          parentId: node.parentId ?? undefined,
+          label: "新しいノード",
+          x: node.x,
+          y: insertY,
+        });
+        if (!data) return;
+        const laid = await persistLayout([...records, data]);
+        setRecords(laid);
         setEditingId(data.id);
       },
       onAddSibling: async (nodeId: string) => {
