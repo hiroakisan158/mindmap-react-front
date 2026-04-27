@@ -53,7 +53,7 @@ export default function MindMapNodeComponent({
         borderRadius: 20,
         background: nodeData.color,
         border: selected ? "2px solid #3b82f6" : "2px solid rgba(0,0,0,0.08)",
-        minWidth: nodeData.isEditing ? 220 : 80,
+        minWidth: nodeData.isEditing ? 400 : 80,
         maxWidth: 400,
         textAlign: "center",
         cursor: "grab",
