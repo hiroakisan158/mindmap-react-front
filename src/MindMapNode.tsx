@@ -52,12 +52,19 @@ export default function MindMapNodeComponent({
         padding: "8px 14px",
         borderRadius: 20,
         background: nodeData.color,
-        border: selected ? "2px solid #3b82f6" : "2px solid rgba(0,0,0,0.08)",
+        border: nodeData.isEditing
+          ? "2px dashed #3b82f6"
+          : selected
+          ? "2px solid #3b82f6"
+          : "2px solid rgba(0,0,0,0.08)",
         minWidth: nodeData.isEditing ? 400 : 80,
         maxWidth: 400,
         textAlign: "center",
         cursor: "grab",
-        boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
+        boxShadow: nodeData.isEditing
+          ? "0 0 0 3px rgba(59,130,246,0.25), 0 2px 8px rgba(0,0,0,0.12)"
+          : "0 2px 8px rgba(0,0,0,0.12)",
+        filter: nodeData.isEditing ? "brightness(1.12)" : undefined,
         userSelect: "none",
       }}
       onDoubleClick={handleDoubleClick}
