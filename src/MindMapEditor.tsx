@@ -21,7 +21,7 @@ const client = generateClient<Schema>();
 
 const NODE_TYPES = { mindmap: MindMapNodeComponent };
 
-const HORIZONTAL_SPACING = 280;
+const HORIZONTAL_SPACING = 440;
 const VERTICAL_SPACING = 70;
 
 const COLORS = [
