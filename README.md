@@ -3,6 +3,9 @@
 Vite + React + AWS Amplify Gen2 で構築したマインドマップアプリです。  
 プロジェクトごとにマインドマップを作成し、ノードの追加・削除・編集・ドラッグ移動ができます。
 
+<img width="800" height="600" alt="image" src="https://github.com/user-attachments/assets/0f24ef31-12bb-46cf-8036-7cac10f6ff57" />
+
+
 ## 主な機能
 
 - プロジェクト（マインドマップ）の作成・削除
