@@ -4,14 +4,36 @@
   padding: 0;
 }
 
+:root {
+  color-scheme: dark;
+  --color-app-bg: #070b12;
+  --color-surface: #0f172a;
+  --color-surface-elevated: #111827;
+  --color-surface-muted: #1e293b;
+  --color-border: #263244;
+  --color-border-strong: #334155;
+  --color-text: #e5e7eb;
+  --color-text-muted: #94a3b8;
+  --color-text-subtle: #64748b;
+  --color-primary: #60a5fa;
+  --color-primary-contrast: #08111f;
+  --color-danger: #fb7185;
+  --shadow-panel: 0 18px 48px rgba(0, 0, 0, 0.45);
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background: #f5f6fa;
-  color: #333;
+  background: var(--color-app-bg);
+  color: var(--color-text);
 }
 
 button {
   cursor: pointer;
+}
+
+input,
+button {
+  font: inherit;
 }
 
 /* Action buttons inside mind map nodes */
@@ -31,4 +53,34 @@ button {
 
 .node-action-btn:hover {
   transform: scale(1.15);
+}
+
+.react-flow {
+  background: var(--color-app-bg);
+}
+
+.react-flow__controls {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  box-shadow: var(--shadow-panel);
+  overflow: hidden;
+}
+
+.react-flow__controls-button {
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text);
+  fill: var(--color-text);
+}
+
+.react-flow__controls-button:hover {
+  background: var(--color-surface-muted);
+}
+
+.react-flow__minimap {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  box-shadow: var(--shadow-panel);
 }

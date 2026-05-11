@@ -5,7 +5,7 @@ import type { NodeData } from "./types";
 const BTN_BASE: React.CSSProperties = {
   position: "absolute",
   borderRadius: "50%",
-  border: "2px solid #fff",
+  border: "2px solid var(--color-surface)",
   alignItems: "center",
   justifyContent: "center",
   zIndex: 10,
@@ -53,17 +53,17 @@ export default function MindMapNodeComponent({
         borderRadius: 20,
         background: nodeData.color,
         border: nodeData.isEditing
-          ? "2px dashed #3b82f6"
+          ? "2px dashed var(--color-primary)"
           : selected
-          ? "2px solid #3b82f6"
-          : "2px solid rgba(0,0,0,0.08)",
+          ? "2px solid var(--color-primary)"
+          : "2px solid rgba(15,23,42,0.4)",
         minWidth: nodeData.isEditing ? 240 : 80,
         maxWidth: 240,
         textAlign: "center",
         cursor: "grab",
         boxShadow: nodeData.isEditing
-          ? "0 0 0 3px rgba(59,130,246,0.25), 0 2px 8px rgba(0,0,0,0.12)"
-          : "0 2px 8px rgba(0,0,0,0.12)",
+          ? "0 0 0 3px rgba(96,165,250,0.3), 0 6px 18px rgba(0,0,0,0.32)"
+          : "0 6px 18px rgba(0,0,0,0.28)",
         filter: nodeData.isEditing ? "brightness(1.12)" : undefined,
         userSelect: "none",
       }}
@@ -120,7 +120,7 @@ export default function MindMapNodeComponent({
           right: -12,
           width: 24,
           height: 24,
-          background: "#3b82f6",
+          background: "var(--color-primary)",
           color: "#fff",
           fontSize: "1em",
           lineHeight: 1,
@@ -201,8 +201,8 @@ export default function MindMapNodeComponent({
           right: -10,
           width: 20,
           height: 20,
-          background: "#f38ba8",
-          color: "#1e1e2e",
+          background: "var(--color-danger)",
+          color: "var(--color-primary-contrast)",
           fontSize: "0.75em",
         }}
       >

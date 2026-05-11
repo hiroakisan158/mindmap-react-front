@@ -195,7 +195,7 @@ function buildFlowGraph(
       source: r.parentId!,
       target: r.id,
       type: "smoothstep",
-      style: { stroke: "#94a3b8", strokeWidth: 2 },
+      style: { stroke: "#64748b", strokeWidth: 2 },
     }));
 
   return { nodes, edges };
@@ -386,8 +386,8 @@ export default function MindMapEditor({ projectId, projectName, onBack }: Props)
       <div
         style={{
           padding: "10px 16px",
-          background: "#fff",
-          borderBottom: "1px solid #e2e8f0",
+          background: "var(--color-surface-elevated)",
+          borderBottom: "1px solid var(--color-border)",
           display: "flex",
           alignItems: "center",
           gap: 12,
@@ -403,7 +403,7 @@ export default function MindMapEditor({ projectId, projectName, onBack }: Props)
               border: "none",
               fontSize: "1.3em",
               lineHeight: 1,
-              color: "#64748b",
+              color: "var(--color-text-muted)",
               padding: "4px 8px",
               borderRadius: 6,
             }}
@@ -417,7 +417,7 @@ export default function MindMapEditor({ projectId, projectName, onBack }: Props)
             fontWeight: 700,
             fontSize: "1.1em",
             flex: 1,
-            color: "#1e293b",
+            color: "var(--color-text)",
             paddingLeft: onBack ? 0 : 40,
           }}
         >
@@ -426,9 +426,9 @@ export default function MindMapEditor({ projectId, projectName, onBack }: Props)
         <button
           onClick={handleAutoLayout}
           style={{
-            background: "#f1f5f9",
-            color: "#475569",
-            border: "1px solid #cbd5e1",
+            background: "var(--color-surface-muted)",
+            color: "var(--color-text)",
+            border: "1px solid var(--color-border-strong)",
             borderRadius: 6,
             padding: "5px 12px",
             fontSize: "0.82em",
@@ -438,7 +438,7 @@ export default function MindMapEditor({ projectId, projectName, onBack }: Props)
         >
           ⤢ 自動整列
         </button>
-        <span style={{ fontSize: "0.75em", color: "#94a3b8" }}>
+        <span style={{ fontSize: "0.75em", color: "var(--color-text-muted)" }}>
           ダブルクリック: 編集
         </span>
       </div>
@@ -455,12 +455,13 @@ export default function MindMapEditor({ projectId, projectName, onBack }: Props)
           fitViewOptions={{ padding: 0.3 }}
           minZoom={0.2}
           maxZoom={2}
+          colorMode="dark"
         >
-          <Background color="#e2e8f0" gap={20} />
+          <Background color="#1e293b" gap={20} />
           <Controls />
           <MiniMap
             nodeColor={(n) => (n.data as NodeData).color as string}
-            maskColor="rgba(0,0,0,0.05)"
+            maskColor="rgba(2,6,23,0.6)"
           />
         </ReactFlow>
       </div>

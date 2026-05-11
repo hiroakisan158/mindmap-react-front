@@ -71,26 +71,31 @@ export default function App() {
   const selectedProject = projects.find((p) => p.id === selectedProjectId);
 
   return (
-    <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
-      {/* モバイル用バックドロップ */}
+    <div
+      style={{
+        display: "flex",
+        height: "100vh",
+        overflow: "hidden",
+        background: "var(--color-app-bg)",
+      }}
+    >
       {isMobile && sidebarOpen && (
         <div
           onClick={() => setSidebarOpen(false)}
           style={{
             position: "fixed",
             inset: 0,
-            background: "rgba(0,0,0,0.5)",
+            background: "rgba(0,0,0,0.65)",
             zIndex: 99,
           }}
         />
       )}
 
-      {/* サイドバー */}
       <aside
         style={{
           width: 220,
-          background: "#1e1e2e",
-          color: "#cdd6f4",
+          background: "var(--color-surface)",
+          color: "var(--color-text)",
           display: "flex",
           flexDirection: "column",
           flexShrink: 0,
@@ -108,7 +113,7 @@ export default function App() {
         <div
           style={{
             padding: "16px 12px 10px",
-            borderBottom: "1px solid #313244",
+            borderBottom: "1px solid var(--color-border)",
           }}
         >
           <div style={{ fontWeight: 700, fontSize: "1.1em", marginBottom: 4 }}>
@@ -117,7 +122,7 @@ export default function App() {
           <div
             style={{
               fontSize: "0.72em",
-              color: "#a6adc8",
+              color: "var(--color-text-muted)",
               wordBreak: "break-all",
             }}
           >
@@ -129,7 +134,7 @@ export default function App() {
           style={{
             padding: "10px 12px 4px",
             fontSize: "0.7em",
-            color: "#6c7086",
+            color: "var(--color-text-subtle)",
             textTransform: "uppercase",
             letterSpacing: "0.08em",
           }}
@@ -155,7 +160,7 @@ export default function App() {
                 padding: "7px 8px",
                 marginBottom: 2,
                 background:
-                  p.id === selectedProjectId ? "#313244" : "transparent",
+                  p.id === selectedProjectId ? "var(--color-surface-muted)" : "transparent",
                 cursor: "pointer",
                 transition: "background 0.15s",
               }}
@@ -180,7 +185,7 @@ export default function App() {
                 style={{
                   background: "none",
                   border: "none",
-                  color: "#585b70",
+                  color: "var(--color-text-subtle)",
                   fontSize: "0.85em",
                   padding: "0 2px",
                   lineHeight: 1,
@@ -188,7 +193,7 @@ export default function App() {
                 }}
                 title="削除"
               >
-                ✕
+                ×
               </button>
             </li>
           ))}
@@ -200,8 +205,8 @@ export default function App() {
             style={{
               width: "100%",
               padding: "9px",
-              background: "#89b4fa",
-              color: "#1e1e2e",
+              background: "var(--color-primary)",
+              color: "var(--color-primary-contrast)",
               border: "none",
               borderRadius: 6,
               fontWeight: 700,
@@ -212,15 +217,15 @@ export default function App() {
           </button>
         </div>
 
-        <div style={{ padding: "8px", borderTop: "1px solid #313244" }}>
+        <div style={{ padding: "8px", borderTop: "1px solid var(--color-border)" }}>
           <button
             onClick={signOut}
             style={{
               width: "100%",
               padding: "7px",
               background: "transparent",
-              color: "#a6adc8",
-              border: "1px solid #45475a",
+              color: "var(--color-text-muted)",
+              border: "1px solid var(--color-border-strong)",
               borderRadius: 6,
               fontSize: "0.82em",
             }}
@@ -230,18 +235,16 @@ export default function App() {
         </div>
       </aside>
 
-      {/* メインエリア */}
       <main
         style={{
           flex: 1,
           display: "flex",
           flexDirection: "column",
-          background: "#f8fafc",
+          background: "var(--color-app-bg)",
           overflow: "hidden",
           position: "relative",
         }}
       >
-        {/* モバイルメニューボタン */}
         {isMobile && (
           <button
             onClick={() => setSidebarOpen((o) => !o)}
@@ -250,8 +253,8 @@ export default function App() {
               top: 12,
               left: 12,
               zIndex: 50,
-              background: "#1e1e2e",
-              border: "none",
+              background: "var(--color-surface)",
+              border: "1px solid var(--color-border)",
               borderRadius: 6,
               padding: "8px 10px",
               display: "flex",
@@ -267,7 +270,7 @@ export default function App() {
                   display: "block",
                   width: 20,
                   height: 2,
-                  background: "#cdd6f4",
+                  background: "var(--color-text)",
                   borderRadius: 1,
                 }}
               />
@@ -289,19 +292,19 @@ export default function App() {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              color: "#94a3b8",
+              color: "var(--color-text-muted)",
               textAlign: "center",
               padding: 24,
             }}
           >
             {projects.length === 0 ? (
               <div>
-                <div style={{ fontSize: "2.5em", marginBottom: 12 }}>🗺️</div>
+                <div style={{ fontSize: "2.5em", marginBottom: 12 }}>Mind Map</div>
                 <div
                   style={{
                     fontSize: "1.1em",
                     marginBottom: 8,
-                    color: "#64748b",
+                    color: "var(--color-text)",
                   }}
                 >
                   マインドマップを作成しましょう
@@ -312,8 +315,8 @@ export default function App() {
               </div>
             ) : (
               <div>
-                <div style={{ fontSize: "2em", marginBottom: 8 }}>👈</div>
-                <div style={{ fontSize: "1em", color: "#64748b" }}>
+                <div style={{ fontSize: "2em", marginBottom: 8 }}>Select a map</div>
+                <div style={{ fontSize: "1em", color: "var(--color-text)" }}>
                   左のサイドバーからプロジェクトを選択してください
                 </div>
               </div>
@@ -322,13 +325,12 @@ export default function App() {
         )}
       </main>
 
-      {/* プロジェクト作成モーダル */}
       {showModal && (
         <div
           style={{
             position: "fixed",
             inset: 0,
-            background: "rgba(0,0,0,0.4)",
+            background: "rgba(0,0,0,0.72)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -340,12 +342,13 @@ export default function App() {
         >
           <div
             style={{
-              background: "#fff",
+              background: "var(--color-surface-elevated)",
+              border: "1px solid var(--color-border)",
               borderRadius: 12,
               padding: 28,
               width: 400,
               maxWidth: "90vw",
-              boxShadow: "0 8px 32px rgba(0,0,0,0.18)",
+              boxShadow: "var(--shadow-panel)",
             }}
           >
             <h3
@@ -353,7 +356,7 @@ export default function App() {
                 marginBottom: 16,
                 fontSize: "1.1em",
                 fontWeight: 700,
-                color: "#1e293b",
+                color: "var(--color-text)",
               }}
             >
               新規マインドマップ
@@ -367,10 +370,12 @@ export default function App() {
               style={{
                 width: "100%",
                 padding: "9px 12px",
-                border: "1px solid #cbd5e1",
+                border: "1px solid var(--color-border-strong)",
                 borderRadius: 7,
                 fontSize: "0.95em",
                 outline: "none",
+                background: "var(--color-surface)",
+                color: "var(--color-text)",
               }}
             />
             <div
@@ -388,9 +393,9 @@ export default function App() {
                 }}
                 style={{
                   padding: "8px 20px",
-                  background: "#f1f5f9",
-                  color: "#475569",
-                  border: "1px solid #cbd5e1",
+                  background: "var(--color-surface-muted)",
+                  color: "var(--color-text)",
+                  border: "1px solid var(--color-border-strong)",
                   borderRadius: 7,
                   fontSize: "0.9em",
                 }}
@@ -401,8 +406,8 @@ export default function App() {
                 onClick={createProject}
                 style={{
                   padding: "8px 20px",
-                  background: "#3b82f6",
-                  color: "#fff",
+                  background: "var(--color-primary)",
+                  color: "var(--color-primary-contrast)",
                   border: "none",
                   borderRadius: 7,
                   fontWeight: 700,
