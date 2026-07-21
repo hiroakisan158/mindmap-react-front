@@ -16,6 +16,7 @@ import { generateClient } from "aws-amplify/data";
 import type { Schema } from "../amplify/data/resource";
 import type { MindMapNodeRecord, NodeData } from "./types";
 import MindMapNodeComponent from "./MindMapNode";
+import { recordsToMarkdown, sanitizeFilename } from "./markdown";
 
 const client = generateClient<Schema>();
 
@@ -210,6 +211,7 @@ interface Props {
 export default function MindMapEditor({ projectId, projectName, onBack }: Props) {
   const [records, setRecords] = useState<MindMapNodeRecord[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
   const pendingLabelRef = useRef<Map<string, string>>(new Map());
 
   /**
@@ -373,6 +375,29 @@ export default function MindMapEditor({ projectId, projectName, onBack }: Props)
     setRecords(next);
   }, [records, persistLayout]);
 
+  const handleCopyMarkdown = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(recordsToMarkdown(records));
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    } catch {
+      alert("クリップボードへのコピーに失敗しました");
+    }
+  }, [records]);
+
+  const handleDownloadMarkdown = useCallback(() => {
+    const md = recordsToMarkdown(records);
+    const blob = new Blob([md], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = sanitizeFilename(projectName);
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, [records, projectName]);
+
   return (
     <div
       style={{
@@ -437,6 +462,42 @@ export default function MindMapEditor({ projectId, projectName, onBack }: Props)
           title="ノード配置を自動整列"
         >
           ⤢ 自動整列
+        </button>
+        <button
+          onClick={handleCopyMarkdown}
+          style={{
+            background: copied
+              ? "var(--color-primary)"
+              : "var(--color-surface-muted)",
+            color: copied
+              ? "var(--color-primary-contrast)"
+              : "var(--color-text)",
+            border: `1px solid ${
+              copied ? "var(--color-primary)" : "var(--color-border-strong)"
+            }`,
+            borderRadius: 6,
+            padding: "5px 12px",
+            fontSize: "0.82em",
+            fontWeight: 600,
+          }}
+          title="Markdown 階層構造をクリップボードにコピー"
+        >
+          {copied ? "✓ コピー済み" : "📋 コピー"}
+        </button>
+        <button
+          onClick={handleDownloadMarkdown}
+          style={{
+            background: "var(--color-surface-muted)",
+            color: "var(--color-text)",
+            border: "1px solid var(--color-border-strong)",
+            borderRadius: 6,
+            padding: "5px 12px",
+            fontSize: "0.82em",
+            fontWeight: 600,
+          }}
+          title="Markdown 階層構造を .md ファイルとしてダウンロード"
+        >
+          ⬇ .md
         </button>
         <span style={{ fontSize: "0.75em", color: "var(--color-text-muted)" }}>
           ダブルクリック: 編集
