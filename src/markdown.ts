@@ -56,16 +56,3 @@ export function recordsToMarkdown(records: MindMapNodeRecord[]): string {
 
   return lines.join("\n") + "\n";
 }
-
-/**
- * プロジェクト名から .md ダウンロード用の安全なファイル名を生成する。
- * 空白は _ に、ファイル名に使えない文字は除去し、末尾に .md を付ける。
- * 空になる場合は mindmap.md にフォールバック。
- */
-export function sanitizeFilename(name: string): string {
-  const base = (name ?? "")
-    .trim()
-    .replace(/[\\/:*?"<>|]/g, "")
-    .replace(/\s+/g, "_");
-  return (base || "mindmap") + ".md";
-}
