@@ -17,6 +17,7 @@ function byY(a: MindMapNodeRecord, b: MindMapNodeRecord): number {
  * - 末端ノード（子を持たない）は見出しにせず箇条書き（-）にする（読みやすさのため）
  * - 見出しの上限（######）を超える 7 階層目以降の親も箇条書きにフォールバック
  * - 箇条書きは、直近の見出し配下を基準にネストしてインデントする
+ * - 大項目（## 階層）は前に `---` の区切り線を入れ、タイトルに `1-` `2-` の連番を振る
  * - 兄弟は画面の上下順（y 昇順）で並べる
  */
 export function recordsToMarkdown(records: MindMapNodeRecord[]): string {
@@ -30,6 +31,21 @@ export function recordsToMarkdown(records: MindMapNodeRecord[]): string {
   });
   childMap.forEach((children) => children.sort(byY));
 
+  const roots = records.filter((r) => !r.parentId).sort(byY);
+
+  // 大項目（## 見出しになるノード＝子を持つ depth1）に連番を振る。
+  // 箇条書きになる末端の depth1 はスキップし、番号が飛ばないようにする。
+  const headerNumber = new Map<string, number>();
+  roots.forEach((root) => {
+    let n = 0;
+    (childMap.get(root.id) ?? []).forEach((child) => {
+      if ((childMap.get(child.id)?.length ?? 0) > 0) {
+        n += 1;
+        headerNumber.set(child.id, n);
+      }
+    });
+  });
+
   const lines: string[] = [];
 
   // depth: root からの距離（0 始まり）／ bulletDepth: 直近の見出しからの箇条書きネスト段数
@@ -42,8 +58,15 @@ export function recordsToMarkdown(records: MindMapNodeRecord[]): string {
     const isHeader = isRoot || (children.length > 0 && level <= 6);
 
     if (isHeader) {
-      if (lines.length > 0) lines.push(""); // 見出しの前に空行
-      lines.push("#".repeat(level) + " " + label);
+      const num = headerNumber.get(node.id);
+      if (level === 2) {
+        // 大項目の境界を明確にするため区切り線を入れる
+        lines.push("", "---", "");
+      } else if (lines.length > 0) {
+        lines.push(""); // 見出しの前に空行
+      }
+      const heading = num !== undefined ? `${num}- ${label}` : label;
+      lines.push("#".repeat(level) + " " + heading);
       children.forEach((child) => emit(child, depth + 1, 0));
     } else {
       lines.push("  ".repeat(bulletDepth) + "- " + label);
@@ -51,7 +74,6 @@ export function recordsToMarkdown(records: MindMapNodeRecord[]): string {
     }
   };
 
-  const roots = records.filter((r) => !r.parentId).sort(byY);
   roots.forEach((root) => emit(root, 0, 0));
 
   return lines.join("\n") + "\n";
