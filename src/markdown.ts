@@ -12,12 +12,11 @@ function byY(a: MindMapNodeRecord, b: MindMapNodeRecord): number {
 
 /**
  * マインドマップのノード群を階層 Markdown 文字列に変換する。
- * - root（parentId なし）は必ず見出し（# ＝タイトル）
- * - 子を持つ中間ノードは見出し（## 〜 ######）
- * - 末端ノード（子を持たない）は見出しにせず箇条書き（-）にする（読みやすさのため）
- * - 見出しの上限（######）を超える 7 階層目以降の親も箇条書きにフォールバック
- * - 箇条書きは、直近の見出し配下を基準にネストしてインデントする
- * - 大項目（## 階層）は前に `---` の区切り線を入れ、タイトルに `1-` `2-` の連番を振る
+ * - root（parentId なし）は見出し（# ＝タイトル）
+ * - 大項目（階層2）で子を持つものは見出し（##）。前に `---` の区切り線を入れ、
+ *   タイトルに `1-` `2-` の連番を振る
+ * - 階層3 以降はすべて箇条書き（-）にし、インデントで階層を表現する
+ * - 末端の大項目（子を持たない階層2）も箇条書きにする
  * - 兄弟は画面の上下順（y 昇順）で並べる
  */
 export function recordsToMarkdown(records: MindMapNodeRecord[]): string {
@@ -54,8 +53,9 @@ export function recordsToMarkdown(records: MindMapNodeRecord[]): string {
     const label = node.label ?? "";
     const children = childMap.get(node.id) ?? [];
     const isRoot = depth === 0;
-    // root、または「子を持ち かつ 見出し上限内」のノードを見出しにする。末端は箇条書き。
-    const isHeader = isRoot || (children.length > 0 && level <= 6);
+    // 見出しにするのは タイトル（階層1）と、子を持つ大項目（階層2）のみ。
+    // 階層3 以降と、末端の大項目は箇条書きにする。
+    const isHeader = isRoot || (level === 2 && children.length > 0);
 
     if (isHeader) {
       const num = headerNumber.get(node.id);
