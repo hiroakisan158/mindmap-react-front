@@ -20,6 +20,7 @@ export default function MindMapNodeComponent({
 }: NodeProps) {
   const nodeData = data as NodeData;
   const inputRef = useRef<HTMLInputElement>(null);
+  const compositionEndAtRef = useRef(0);
 
   useEffect(() => {
     if (nodeData.isEditing && inputRef.current) {
@@ -36,11 +37,26 @@ export default function MindMapNodeComponent({
     [id, nodeData]
   );
 
+  const handleCompositionEnd = useCallback(() => {
+    // macOSではIME変換確定のEnterがcompositionend直後にkeydownとして
+    // 発火し、isComposingが既にfalseになっているため、直後のEnterを
+    // 変換確定とみなして無視する猶予時間を記録する
+    compositionEndAtRef.current = Date.now();
+  }, []);
+
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === "Enter" || e.key === "Escape") {
-        nodeData.onStopEdit(id);
+      if (e.key !== "Enter" && e.key !== "Escape") return;
+
+      if (e.key === "Enter") {
+        const isImeConfirmEnter =
+          e.nativeEvent.isComposing ||
+          e.keyCode === 229 ||
+          Date.now() - compositionEndAtRef.current < 50;
+        if (isImeConfirmEnter) return;
       }
+
+      nodeData.onStopEdit(id);
     },
     [id, nodeData]
   );
@@ -79,6 +95,7 @@ export default function MindMapNodeComponent({
           onChange={(e) => nodeData.onLabelChange(id, e.target.value)}
           onBlur={() => nodeData.onStopEdit(id)}
           onKeyDown={handleKeyDown}
+          onCompositionEnd={handleCompositionEnd}
           style={{
             background: "transparent",
             border: "none",
